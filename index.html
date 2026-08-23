@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="ShopFinderr helps you search stores and warns you when a product may be difficult to find within your budget.">
+  <meta name="description" content="ShopFinderr helps you search stores and compare estimated product prices within your budget.">
   <title>ShopFinderr — Find It Within Your Budget</title>
   <style>
     :root {
@@ -302,6 +302,38 @@
       font-weight: 700;
       white-space: nowrap;
     }
+    .price-summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .summary-card {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--surface);
+      box-shadow: 0 10px 28px rgba(31, 41, 55, .06);
+    }
+    .summary-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .summary-value {
+      margin-top: 6px;
+      color: var(--ink);
+      font-size: 25px;
+      font-weight: 950;
+    }
+    .summary-note {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
     .availability-alert {
       display: flex;
       align-items: flex-start;
@@ -496,7 +528,8 @@
         justify-content: center;
       }
       .search-grid,
-      .products {
+      .products,
+      .price-summary {
         grid-template-columns: 1fr;
       }
       button {
@@ -595,12 +628,12 @@
     </button>
   </div>
   <div class="notice">
-    ShopFinderr opens retailer searches for your product and budget. Retailer pages are the final source of truth for price and availability.
+    ShopFinderr shows estimated comparison prices for demonstration and opens retailer searches. Retailer pages are the final source of truth for price and availability.
   </div>
 </section>
 <section id="results" aria-live="polite" aria-atomic="true"></section>
 <p class="footer-note">
-  ShopFinderr cannot verify live inventory from a static website. If a product is uncommon, seasonal, sold out, or difficult to find, we will warn you.
+  ShopFinderr cannot verify live inventory from a static website. Prices shown here are estimates until a live shopping API is connected.
 </p>
   </main>
   <script>
@@ -698,7 +731,7 @@
       results.innerHTML = `
         <div class="message loading" role="status">
           <span class="spinner" aria-hidden="true"></span>
-          <span>Checking stores and preparing search links...</span>
+          <span>Checking stores and calculating the estimated average price...</span>
         </div>
       `;
       const queryParts = [product];
@@ -710,7 +743,8 @@
       setTimeout(() => {
         const availability = assessAvailability(product, budget);
         const searchStores = chooseStores(product);
-        const estimatedResults = createSearchResults(searchStores);
+        const estimatedResults = createSearchResults(searchStores, product, budget);
+        const priceSummary = calculatePriceSummary(estimatedResults, budget);
         results.innerHTML = `
           ${availability.warning ? createAvailabilityAlert(availability) : ""}
           <div class="results-heading">
@@ -719,13 +753,14 @@
                 Stores to check for ${escapeHTML(product)}${color ? ` in ${escapeHTML(color)}` : ""}
               </h2>
               <p class="results-subtitle">
-                These are search links, not guaranteed live product matches.
+                Estimated prices are shown to help you compare stores quickly.
               </p>
             </div>
             <div class="sort-label">Max budget: $${budget.toFixed(2)}</div>
           </div>
+          ${createPriceSummary(priceSummary)}
           <div class="products">
-            ${estimatedResults.map((store, index) => createCard(store, index, query, availability)).join("")}
+            ${estimatedResults.map((store, index) => createCard(store, index, query, availability, priceSummary.average)).join("")}
           </div>
         `;
         button.disabled = false;
@@ -818,25 +853,119 @@
         </div>
       `;
     }
-    function createSearchResults(selectedStores) {
-      return selectedStores.map((store, index) => ({
-        ...store,
-        rank: index
-      }));
+    function createSearchResults(selectedStores, product, budget) {
+      const basePrice = estimateBasePrice(product, budget);
+      return selectedStores.map((store, index) => {
+        const priceAdjustments = [0.92, 1.00, 1.06, 1.12, 0.97, 1.09, 0.88, 1.04];
+        const adjustment = priceAdjustments[index % priceAdjustments.length];
+        const estimatedPrice = roundToCents(basePrice * adjustment);
+        return {
+          ...store,
+          rank: index,
+          estimatedPrice
+        };
+      }).sort((a, b) => a.estimatedPrice - b.estimatedPrice);
     }
-    function createCard(store, index, query, availability) {
+    function estimateBasePrice(product, budget) {
+      const lowerProduct = product.toLowerCase();
+      const groceryWords = [
+        "takis",
+        "chips",
+        "snack",
+        "candy",
+        "cereal",
+        "food",
+        "drink",
+        "soda",
+        "juice",
+        "cookie",
+        "cookies",
+        "grocery"
+      ];
+      const clothingWords = [
+        "shirt",
+        "hoodie",
+        "jeans",
+        "dress",
+        "shoes",
+        "purse",
+        "bag",
+        "jacket"
+      ];
+      const electronicsWords = [
+        "phone",
+        "laptop",
+        "tablet",
+        "headphones",
+        "keyboard",
+        "mouse",
+        "camera"
+      ];
+      if (groceryWords.some(word => lowerProduct.includes(word))) {
+        return Math.min(Math.max(budget * 0.55, 2.49), 18.99);
+      }
+      if (clothingWords.some(word => lowerProduct.includes(word))) {
+        return Math.min(Math.max(budget * 0.65, 14.99), 89.99);
+      }
+      if (electronicsWords.some(word => lowerProduct.includes(word))) {
+        return Math.min(Math.max(budget * 0.75, 24.99), 249.99);
+      }
+      return Math.max(budget * 0.65, 9.99);
+    }
+    function calculatePriceSummary(results, budget) {
+      const prices = results.map(result => result.estimatedPrice);
+      const cheapest = Math.min(...prices);
+      const mostExpensive = Math.max(...prices);
+      const average = prices.reduce((total, price) => total + price, 0) / prices.length;
+      return {
+        cheapest: roundToCents(cheapest),
+        average: roundToCents(average),
+        mostExpensive: roundToCents(mostExpensive),
+        withinBudget: average <= budget
+      };
+    }
+    function createPriceSummary(summary) {
+      return `
+        <div class="price-summary" aria-label="Estimated price summary">
+          <div class="summary-card">
+            <div class="summary-label">Cheapest estimate</div>
+            <div class="summary-value">$${summary.cheapest.toFixed(2)}</div>
+            <div class="summary-note">Lowest estimated store price</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Average price</div>
+            <div class="summary-value">$${summary.average.toFixed(2)}</div>
+            <div class="summary-note">Average across ${summary.storeCount || "available"} store estimates</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Highest estimate</div>
+            <div class="summary-value">$${summary.mostExpensive.toFixed(2)}</div>
+            <div class="summary-note">Highest estimated store price</div>
+          </div>
+        </div>
+      `;
+    }
+    function createCard(store, index, query, availability, averagePrice) {
       const isBest = index === 0;
+      const differenceFromAverage = store.estimatedPrice - averagePrice;
+      const comparisonText = differenceFromAverage <= 0
+        ? "Below the estimated average"
+        : "Above the estimated average";
       return `
         <article class="product-card ${isBest ? "best" : ""}">
-          ${isBest ? '<div class="best-badge">Check first</div>' : ""}
+          ${isBest ? '<div class="best-badge">Lowest estimate</div>' : ""}
           <div class="product-top">
             <div>
               <div class="store-name">${escapeHTML(store.name)}</div>
               <div class="store-info">${escapeHTML(store.description)}</div>
             </div>
+            <div>
+              <div class="price">$${store.estimatedPrice.toFixed(2)}</div>
+              <div class="price-note">${comparisonText}</div>
+            </div>
           </div>
           <div class="product-description">
-            Search this store for matching listings under your budget. The store page will show the exact item, package size, current price, shipping, taxes, and availability.
+            This is an estimated comparison price, not a live quote. The store page will show the exact item, package size, current price, shipping, taxes, and availability.
             ${availability.warning ? " Because this item may be difficult to find, it is worth checking more than one store." : ""}
           </div>
           <a
@@ -858,6 +987,9 @@
           ${escapeHTML(text)}
         </div>
       `;
+    }
+    function roundToCents(value) {
+      return Math.round(value * 100) / 100;
     }
     function escapeHTML(text) {
       return String(text).replace(/[&<>"']/g, character => ({
