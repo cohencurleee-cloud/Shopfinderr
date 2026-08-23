@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="ShopFinderr helps you search stores and compare estimated product prices within your budget.">
-  <title>ShopFinderr — Find It Within Your Budget</title>
+  <meta name="description" content="ShopFinderr helps you find products at official brand stores and major retailers.">
+  <title>ShopFinderr — Find the Right Store</title>
   <style>
     :root {
       color-scheme: light;
@@ -16,7 +16,7 @@
       --green: #08734f;
       --red: #b42318;
       --yellow: #9a6700;
-      --card: rgba(255,255,255,.92);
+      --card: rgba(255,255,255,.94);
       --surface: #ffffff;
       --surface-soft: #f7f8fc;
       --line: #e4e7ec;
@@ -31,7 +31,7 @@
       --ink: #f4f7fb;
       --muted: #b7c0d0;
       --soft-muted: #d0d7e2;
-      --card: rgba(25, 31, 45, .95);
+      --card: rgba(25, 31, 45, .96);
       --surface: #1b2230;
       --surface-soft: #101621;
       --line: #344054;
@@ -115,7 +115,7 @@
     header {
       position: relative;
       overflow: hidden;
-      padding: 28px 20px 92px;
+      padding: 28px 20px 105px;
       color: white;
       text-align: center;
       background: linear-gradient(135deg, var(--header-start), var(--header-mid) 55%, var(--header-end));
@@ -179,15 +179,17 @@
     header p {
       position: relative;
       z-index: 1;
-      margin: 12px 0 0;
+      max-width: 650px;
+      margin: 12px auto 0;
       color: #e8e5ff;
       font-size: 18px;
+      line-height: 1.5;
     }
     .container {
       position: relative;
       z-index: 2;
       width: min(1080px, calc(100% - 32px));
-      margin: -48px auto 50px;
+      margin: -58px auto 50px;
     }
     .search-box {
       padding: 26px;
@@ -222,7 +224,7 @@
       background: var(--surface);
       font: inherit;
       font-size: 16px;
-      transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+      transition: border-color .2s ease, box-shadow .2s ease;
     }
     input::placeholder {
       color: var(--muted);
@@ -240,7 +242,8 @@
       box-shadow: 0 0 0 4px rgba(118,87,255,.13);
     }
     button,
-    .store-button {
+    .store-button,
+    .quick-button {
       border: 0;
       border-radius: 13px;
       color: #fff;
@@ -251,7 +254,8 @@
       transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease;
     }
     html[data-theme="high-contrast"] button,
-    html[data-theme="high-contrast"] .store-button {
+    html[data-theme="high-contrast"] .store-button,
+    html[data-theme="high-contrast"] .quick-button {
       color: #000;
       background: var(--purple);
     }
@@ -262,7 +266,8 @@
       box-shadow: 0 10px 20px rgba(91,61,245,.22);
     }
     button:hover:not(:disabled),
-    .store-button:hover {
+    .store-button:hover,
+    .quick-button:hover {
       transform: translateY(-2px);
       box-shadow: 0 12px 24px rgba(91,61,245,.25);
     }
@@ -275,6 +280,37 @@
       color: var(--muted);
       font-size: 13px;
       line-height: 1.5;
+    }
+    .quick-searches {
+      margin-top: 22px;
+    }
+    .quick-title {
+      margin: 0 0 10px;
+      color: var(--soft-muted);
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .quick-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+    .quick-button {
+      padding: 9px 13px;
+      color: var(--purple-dark);
+      background: rgba(118,87,255,.1);
+      box-shadow: none;
+      font-size: 13px;
+    }
+    html[data-theme="dark"] .quick-button {
+      color: #d8d0ff;
+      background: rgba(118,87,255,.2);
+    }
+    html[data-theme="high-contrast"] .quick-button {
+      color: #000;
+      background: var(--purple);
     }
     #results {
       margin-top: 30px;
@@ -295,6 +331,12 @@
       margin: 5px 0 0;
       color: var(--muted);
       font-size: 14px;
+      line-height: 1.5;
+    }
+    .result-tools {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
     .sort-label {
       color: var(--muted);
@@ -334,41 +376,42 @@
       font-size: 12px;
       line-height: 1.4;
     }
-    .availability-alert {
+    .official-banner {
       display: flex;
       align-items: flex-start;
       gap: 14px;
       margin-bottom: 18px;
       padding: 18px;
-      border: 1px solid #f2c94c;
+      border: 1px solid rgba(118,87,255,.35);
       border-radius: 18px;
-      color: var(--yellow);
-      background: rgba(255, 248, 220, .95);
-      box-shadow: 0 8px 22px rgba(154, 103, 0, .08);
+      color: var(--ink);
+      background: rgba(238,235,255,.9);
     }
-    html[data-theme="dark"] .availability-alert {
-      background: #3b3215;
+    html[data-theme="dark"] .official-banner {
+      background: #29234d;
     }
-    html[data-theme="high-contrast"] .availability-alert {
+    html[data-theme="high-contrast"] .official-banner {
       color: #000;
-      background: var(--yellow);
+      background: var(--purple);
     }
-    .availability-alert .alert-icon {
+    .official-banner .banner-icon {
       flex: 0 0 auto;
       font-size: 24px;
       line-height: 1;
     }
-    .availability-alert strong {
+    .official-banner strong {
       display: block;
       margin-bottom: 4px;
-      color: inherit;
       font-size: 16px;
     }
-    .availability-alert p {
+    .official-banner p {
       margin: 0;
-      color: inherit;
+      color: var(--soft-muted);
       font-size: 14px;
       line-height: 1.5;
+    }
+    html[data-theme="high-contrast"] .official-banner p {
+      color: #000;
     }
     .products {
       display: grid;
@@ -379,7 +422,7 @@
       position: relative;
       display: flex;
       flex-direction: column;
-      min-height: 300px;
+      min-height: 310px;
       padding: 22px;
       overflow: hidden;
       border: 1px solid var(--line);
@@ -388,38 +431,49 @@
       box-shadow: 0 10px 28px rgba(31, 41, 55, .07);
       animation: rise .35s ease both;
     }
-    .product-card.best {
+    .product-card.official {
       border: 2px solid #9b8cff;
       box-shadow: 0 14px 35px rgba(118,87,255,.16);
     }
-    html[data-theme="high-contrast"] .product-card.best {
-      border-color: var(--purple);
+    .product-card.best {
+      border-color: #55b98d;
     }
-    .best-badge {
-      position: absolute;
-      top: 14px;
-      right: 14px;
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 16px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
       padding: 6px 10px;
       border-radius: 999px;
-      color: var(--green);
-      background: rgba(217,248,236,.95);
       font-size: 11px;
       font-weight: 900;
       text-transform: uppercase;
       letter-spacing: .05em;
     }
-    html[data-theme="dark"] .best-badge {
+    .badge.official-badge {
+      color: var(--purple-dark);
+      background: rgba(118,87,255,.13);
+    }
+    .badge.best-badge {
+      color: var(--green);
+      background: rgba(217,248,236,.95);
+    }
+    html[data-theme="dark"] .badge.best-badge {
       background: #123d31;
     }
-    html[data-theme="high-contrast"] .best-badge {
+    html[data-theme="high-contrast"] .badge {
       color: #000;
-      background: var(--green);
+      background: var(--purple);
     }
     .product-top {
       display: flex;
       justify-content: space-between;
       gap: 15px;
-      margin-bottom: 22px;
+      margin-bottom: 20px;
     }
     .store-name {
       font-size: 20px;
@@ -538,9 +592,11 @@
       .results-heading {
         display: block;
       }
+      .result-tools {
+        margin-top: 10px;
+      }
       .sort-label {
         display: block;
-        margin-top: 8px;
       }
     }
     @media (max-width: 480px) {
@@ -576,7 +632,7 @@
       </div>
     </div>
 <h1>Shop<span>Finderr</span></h1>
-<p>Search stores and find products within your budget.</p>
+<p>Search the official brand store first, then compare other retailers within your budget.</p>
   </header>
   <main id="main-content" class="container">
     <section class="search-box" aria-labelledby="search-heading">
@@ -588,7 +644,7 @@
         id="product"
         type="text"
         autocomplete="off"
-        placeholder="Example: blue Takis"
+        placeholder="Try: Coach purse or Nike Dunks"
         aria-describedby="productHelp"
       >
       <div id="productHelp" class="visually-hidden">
@@ -616,70 +672,171 @@
         min="0.01"
         step="0.01"
         inputmode="decimal"
-        placeholder="$5"
+        placeholder="$120"
         aria-describedby="budgetHelp"
       >
       <div id="budgetHelp" class="visually-hidden">
         Enter the maximum amount you want to spend.
       </div>
     </div>
-    <button id="searchButton" type="button" onclick="findProducts()">
+    <button id="searchButton" type="button">
       Find It
     </button>
   </div>
   <div class="notice">
-    ShopFinderr shows estimated comparison prices for demonstration and opens retailer searches. Retailer pages are the final source of truth for price and availability.
+    Brand searches are prioritized automatically. For example, “Coach purse” opens Coach first and “Nike Dunks” opens Nike first. Prices shown are estimates because this static site does not have live retailer pricing.
+  </div>
+  <div class="quick-searches">
+    <p class="quick-title">Popular searches</p>
+    <div class="quick-list">
+      <button class="quick-button" type="button" data-product="Coach purse">Coach purse</button>
+      <button class="quick-button" type="button" data-product="Nike Dunks">Nike Dunks</button>
+      <button class="quick-button" type="button" data-product="Adidas Samba">Adidas Samba</button>
+      <button class="quick-button" type="button" data-product="New Balance 550">New Balance 550</button>
+      <button class="quick-button" type="button" data-product="Apple AirPods">Apple AirPods</button>
+    </div>
   </div>
 </section>
 <section id="results" aria-live="polite" aria-atomic="true"></section>
 <p class="footer-note">
-  ShopFinderr cannot verify live inventory from a static website. Prices shown here are estimates until a live shopping API is connected.
+  ShopFinderr opens official brand and retailer search pages. Always confirm the exact product, price, shipping, taxes, and availability before buying.
 </p>
   </main>
   <script>
-    const stores = [
+    const officialBrands = [
       {
-        name: "Amazon",
-        description: "Search Amazon listings and current offers.",
-        url: query => `https://www.amazon.com/s?k=${encodeURIComponent(query)}`
+        key: "coach",
+        name: "Coach",
+        description: "Official Coach store",
+        domains: ["coach.com"],
+        url: query => `https://www.coach.com/search?q=${encodeURIComponent(query)}`
+      },
+      {
+        key: "nike",
+        name: "Nike",
+        description: "Official Nike store",
+        domains: ["nike.com"],
+        url: query => `https://www.nike.com/w?q=${encodeURIComponent(query)}`
+      },
+      {
+        key: "adidas",
+        name: "Adidas",
+        description: "Official Adidas store",
+        domains: ["adidas.com"],
+        url: query => `https://www.adidas.com/us/search?q=${encodeURIComponent(query)}`
+      },
+      {
+        key: "new balance",
+        name: "New Balance",
+        description: "Official New Balance store",
+        domains: ["newbalance.com"],
+        url: query => `https://www.newbalance.com/search/?q=${encodeURIComponent(query)}`
+      },
+      {
+        key: "puma",
+        name: "Puma",
+        description: "Official Puma store",
+        domains: ["us.puma.com"],
+        url: query => `https://us.puma.com/us/en/search?q=${encodeURIComponent(query)}`
+      },
+      {
+        key: "under armour",
+        name: "Under Armour",
+        description: "Official Under Armour store",
+        domains: ["underarmour.com"],
+        url: query => `https://www.underarmour.com/en-us/search?q=${encodeURIComponent(query)}`
+      },
+      {
+        key: "apple",
+        name: "Apple",
+        description: "Official Apple store",
+        domains: ["apple.com"],
+        url: query => `https://www.apple.com/us/search/${encodeURIComponent(query)}`
+      },
+      {
+        key: "samsung",
+        name: "Samsung",
+        description: "Official Samsung store",
+        domains: ["samsung.com"],
+        url: query => `https://www.samsung.com/us/search/?searchvalue=${encodeURIComponent(query)}`
+      },
+      {
+        key: "lululemon",
+        name: "lululemon",
+        description: "Official lululemon store",
+        domains: ["lululemon.com"],
+        url: query => `https://shop.lululemon.com/search?Ntt=${encodeURIComponent(query)}`
+      },
+      {
+        key: "levi",
+        name: "Levi's",
+        description: "Official Levi's store",
+        domains: ["levi.com"],
+        url: query => `https://www.levi.com/US/en_US/search?q=${encodeURIComponent(query)}`
+      },
+      {
+        key: "converse",
+        name: "Converse",
+        description: "Official Converse store",
+        domains: ["converse.com"],
+        url: query => `https://www.converse.com/search?q=${encodeURIComponent(query)}`
+      },
+      {
+        key: "vans",
+        name: "Vans",
+        description: "Official Vans store",
+        domains: ["vans.com"],
+        url: query => `https://www.vans.com/en-us/search?q=${encodeURIComponent(query)}`
+      }
+    ];
+    const retailerStores = [
+      {
+        name: "Google Shopping",
+        description: "Compare listings from multiple stores",
+        url: query => `https://www.google.com/search?tbm=shop&q=${encodeURIComponent(query)}`
+      },
+      {
+        name: "Foot Locker",
+        description: "Search sneakers and athletic footwear",
+        url: query => `https://www.footlocker.com/search?query=${encodeURIComponent(query)}`
+      },
+      {
+        name: "Finish Line",
+        description: "Search sneakers and sportswear",
+        url: query => `https://www.finishline.com/store/search/search.jsp?query=${encodeURIComponent(query)}`
+      },
+      {
+        name: "Nordstrom",
+        description: "Search fashion, shoes, and accessories",
+        url: query => `https://www.nordstrom.com/sr?keyword=${encodeURIComponent(query)}`
+      },
+      {
+        name: "Macy's",
+        description: "Search fashion and accessories",
+        url: query => `https://www.macys.com/shop/featured/${encodeURIComponent(query)}`
+      },
+      {
+        name: "eBay",
+        description: "Search new, used, and collectible listings",
+        url: query => `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}`
       },
       {
         name: "Walmart",
-        description: "Search Walmart's product catalog.",
+        description: "Search Walmart's product catalog",
         url: query => `https://www.walmart.com/search?q=${encodeURIComponent(query)}`
       },
       {
         name: "Target",
-        description: "Search Target's available products.",
+        description: "Search Target's available products",
         url: query => `https://www.target.com/s?searchTerm=${encodeURIComponent(query)}`
-      },
-      {
-        name: "eBay",
-        description: "Search new, used, and collectible listings.",
-        url: query => `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}`
-      },
-      {
-        name: "Kroger",
-        description: "Search grocery products and local store listings.",
-        url: query => `https://www.kroger.com/search?query=${encodeURIComponent(query)}`
-      },
-      {
-        name: "Instacart",
-        description: "Search grocery delivery listings near you.",
-        url: query => `https://www.instacart.com/store/s?k=${encodeURIComponent(query)}`
-      },
-      {
-        name: "Dollar General",
-        description: "Search low-cost everyday products.",
-        url: query => `https://www.dollargeneral.com/search?q=${encodeURIComponent(query)}`
-      },
-      {
-        name: "CVS",
-        description: "Search snacks, groceries, and everyday products.",
-        url: query => `https://www.cvs.com/search?searchTerm=${encodeURIComponent(query)}`
       }
     ];
     const themeSelect = document.getElementById("themeSelect");
+    const productInput = document.getElementById("product");
+    const colorInput = document.getElementById("color");
+    const budgetInput = document.getElementById("budget");
+    const searchButton = document.getElementById("searchButton");
+    const results = document.getElementById("results");
     function applyTheme(theme) {
       const allowedThemes = ["light", "dark", "high-contrast"];
       const selectedTheme = allowedThemes.includes(theme) ? theme : "light";
@@ -688,7 +845,7 @@
       try {
         localStorage.setItem("shopfinderr-theme", selectedTheme);
       } catch (error) {
-        // Storage may be unavailable in private browsing.
+        // Local storage may be unavailable.
       }
     }
     function loadTheme() {
@@ -706,254 +863,282 @@
         window.matchMedia("(prefers-color-scheme: dark)").matches;
       applyTheme(prefersDark ? "dark" : "light");
     }
-    themeSelect.addEventListener("change", event => {
-      applyTheme(event.target.value);
-    });
     function findProducts() {
-      const product = document.getElementById("product").value.trim();
-      const color = document.getElementById("color").value.trim();
-      const budgetInput = document.getElementById("budget").value.trim();
-      const budget = Number(budgetInput);
-      const results = document.getElementById("results");
-      const button = document.getElementById("searchButton");
+      const product = productInput.value.trim();
+      const color = colorInput.value.trim();
+      const budgetText = budgetInput.value.trim();
+      const budget = Number(budgetText);
       if (!product) {
-        showMessage("Enter a product first.", "Tell us what you want to find.");
-        document.getElementById("product").focus();
+        showMessage("Enter a product first.", "Try “Coach purse” or “Nike Dunks.”");
+        productInput.focus();
         return;
       }
-      if (!budgetInput || !Number.isFinite(budget) || budget <= 0) {
+      if (!budgetText || !Number.isFinite(budget) || budget <= 0) {
         showMessage("Enter a valid budget.", "Your budget must be greater than zero.");
-        document.getElementById("budget").focus();
+        budgetInput.focus();
         return;
       }
-      button.disabled = true;
-      button.textContent = "Searching...";
+      const query = [product, color].filter(Boolean).join(" ");
+      searchButton.disabled = true;
+      searchButton.textContent = "Searching...";
       results.innerHTML = `
         <div class="message loading" role="status">
           <span class="spinner" aria-hidden="true"></span>
-          <span>Checking stores and calculating the estimated average price...</span>
+          <span>Finding the official brand store and other places to shop...</span>
         </div>
       `;
-      const queryParts = [product];
-      if (color) {
-        queryParts.push(color);
-      }
-      queryParts.push(`under $${budget.toFixed(2)}`);
-      const query = queryParts.join(" ");
       setTimeout(() => {
-        const availability = assessAvailability(product, budget);
-        const searchStores = chooseStores(product);
-        const estimatedResults = createSearchResults(searchStores, product, budget);
-        const priceSummary = calculatePriceSummary(estimatedResults, budget);
+        const officialMatches = findOfficialBrands(product);
+        const selectedStores = buildStoreList(officialMatches, product);
+        const estimatedResults = createSearchResults(selectedStores, product, budget);
+        const summary = calculatePriceSummary(estimatedResults, budget);
+        const officialBrand = officialMatches[0] || null;
         results.innerHTML = `
-          ${availability.warning ? createAvailabilityAlert(availability) : ""}
+          ${officialBrand ? createOfficialBanner(officialBrand, product) : createGeneralBanner(product)}
           <div class="results-heading">
             <div>
               <h2 class="results-title">
-                Stores to check for ${escapeHTML(product)}${color ? ` in ${escapeHTML(color)}` : ""}
+                Where to shop for ${escapeHTML(product)}${color ? ` in ${escapeHTML(color)}` : ""}
               </h2>
               <p class="results-subtitle">
-                Estimated prices are shown to help you compare stores quickly.
+                ${officialBrand
+                  ? `${escapeHTML(officialBrand.name)} is shown first because it is the official brand store.`
+                  : "No official brand match was detected, so comparison stores are shown first."}
               </p>
             </div>
-            <div class="sort-label">Max budget: $${budget.toFixed(2)}</div>
+            <div class="result-tools">
+              <div class="sort-label">Max budget: $${budget.toFixed(2)}</div>
+            </div>
           </div>
-          ${createPriceSummary(priceSummary)}
+          ${createPriceSummary(summary)}
           <div class="products">
-            ${estimatedResults.map((store, index) => createCard(store, index, query, availability, priceSummary.average)).join("")}
+            ${estimatedResults.map((store, index) =>
+              createCard(store, index, query, summary.average, budget)
+            ).join("")}
           </div>
         `;
-        button.disabled = false;
-        button.textContent = "Find It";
+        searchButton.disabled = false;
+        searchButton.textContent = "Find It";
         window.scrollTo({
           top: results.offsetTop - 20,
           behavior: "smooth"
         });
-      }, 500);
+      }, 350);
     }
-    function chooseStores(product) {
+    function findOfficialBrands(product) {
       const lowerProduct = product.toLowerCase();
-      const groceryWords = [
-        "takis",
-        "chips",
-        "snack",
-        "candy",
-        "cereal",
-        "food",
-        "drink",
-        "soda",
-        "juice",
-        "cookie",
-        "cookies",
-        "grocery"
-      ];
-      const isGrocery = groceryWords.some(word => lowerProduct.includes(word));
-      if (isGrocery) {
-        return stores.filter(store =>
-          ["Walmart", "Target", "Kroger", "Instacart", "Dollar General", "CVS", "Amazon", "eBay"]
-            .includes(store.name)
-        );
-      }
-      return stores.filter(store =>
-        ["Amazon", "Walmart", "Target", "eBay", "Instacart"]
-          .includes(store.name)
-      );
+      return officialBrands
+        .filter(brand => lowerProduct.includes(brand.key))
+        .sort((a, b) => b.key.length - a.key.length);
     }
-    function assessAvailability(product, budget) {
+    function buildStoreList(officialMatches, product) {
       const lowerProduct = product.toLowerCase();
-      const uncommonWords = [
-        "blue takis",
-        "rare",
-        "limited edition",
-        "discontinued",
-        "vintage",
-        "exclusive",
-        "hard to find",
-        "sold out",
-        "collectible"
-      ];
-      const likelyUncommon = uncommonWords.some(word => lowerProduct.includes(word));
-      const veryLowBudget = budget < 5;
-      const warning = likelyUncommon || veryLowBudget;
-      if (likelyUncommon && veryLowBudget) {
-        return {
-          warning: true,
-          title: "This item may be difficult to find under your budget.",
-          text: "The product may be uncommon, limited, sold out, or priced above your budget. Check several stores and confirm the final price before buying."
-        };
-      }
-      if (likelyUncommon) {
-        return {
-          warning: true,
-          title: "This item may not be widely available.",
-          text: "The product name suggests it could be uncommon, limited, seasonal, or sold out at some stores. Try multiple retailers."
-        };
-      }
-      if (veryLowBudget) {
-        return {
-          warning: true,
-          title: "Your budget is very low for some products.",
-          text: "You may find this item, but shipping, taxes, package size, or retailer minimums could make the final total higher than your budget."
-        };
-      }
-      return {
-        warning: false,
-        title: "",
-        text: ""
-      };
-    }
-    function createAvailabilityAlert(availability) {
-      return `
-        <div class="availability-alert" role="status">
-          <div class="alert-icon" aria-hidden="true">⚠️</div>
-          <div>
-            <strong>${escapeHTML(availability.title)}</strong>
-            <p>${escapeHTML(availability.text)}</p>
-          </div>
-        </div>
-      `;
+      const stores = [];
+      officialMatches.forEach(brand => {
+        stores.push({
+          ...brand,
+          official: true,
+          estimatedPrice: null
+        });
+      });
+      const sneakerSearch = [
+        "dunk",
+        "dunks",
+        "sneaker",
+        "sneakers",
+        "shoe",
+        "shoes",
+        "jordan",
+        "samba",
+        "550",
+        "yeezy",
+        "air max"
+      ].some(word => lowerProduct.includes(word));
+      const fashionSearch = [
+        "purse",
+        "bag",
+        "dress",
+        "shirt",
+        "hoodie",
+        "jeans",
+        "jacket",
+        "clothing",
+        "clothes"
+      ].some(word => lowerProduct.includes(word));
+      const comparisonNames = sneakerSearch
+        ? ["Google Shopping", "Foot Locker", "Finish Line", "Nordstrom", "eBay", "Macy's"]
+        : fashionSearch
+          ? ["Google Shopping", "Nordstrom", "Macy's", "eBay", "Target", "Walmart"]
+          : ["Google Shopping", "Target", "Walmart", "Nordstrom", "eBay"];
+      comparisonNames.forEach(name => {
+        const store = retailerStores.find(item => item.name === name);
+        if (store && !stores.some(item => item.name === store.name)) {
+          stores.push({
+            ...store,
+            official: false,
+            estimatedPrice: null
+          });
+        }
+      });
+      return stores;
     }
     function createSearchResults(selectedStores, product, budget) {
       const basePrice = estimateBasePrice(product, budget);
       return selectedStores.map((store, index) => {
-        const priceAdjustments = [0.92, 1.00, 1.06, 1.12, 0.97, 1.09, 0.88, 1.04];
-        const adjustment = priceAdjustments[index % priceAdjustments.length];
-        const estimatedPrice = roundToCents(basePrice * adjustment);
+        const officialAdjustment = store.official ? 1.04 : 1;
+        const priceAdjustments = [0.88, 0.96, 1.02, 1.08, 1.14, 0.91, 1.06, 1.12];
+        const adjustment = store.official
+          ? officialAdjustment
+          : priceAdjustments[index % priceAdjustments.length];
         return {
           ...store,
-          rank: index,
-          estimatedPrice
+          estimatedPrice: roundToCents(basePrice * adjustment)
         };
-      }).sort((a, b) => a.estimatedPrice - b.estimatedPrice);
+      }).sort((a, b) => {
+        if (a.official && !b.official) return -1;
+        if (!a.official && b.official) return 1;
+        return a.estimatedPrice - b.estimatedPrice;
+      });
     }
     function estimateBasePrice(product, budget) {
       const lowerProduct = product.toLowerCase();
-      const groceryWords = [
-        "takis",
-        "chips",
-        "snack",
-        "candy",
-        "cereal",
-        "food",
-        "drink",
-        "soda",
-        "juice",
-        "cookie",
-        "cookies",
-        "grocery"
+      const sneakerWords = [
+        "dunk",
+        "dunks",
+        "sneaker",
+        "sneakers",
+        "jordan",
+        "samba",
+        "yeezy",
+        "air max",
+        "550"
       ];
-      const clothingWords = [
-        "shirt",
-        "hoodie",
-        "jeans",
-        "dress",
-        "shoes",
+      const purseWords = [
         "purse",
-        "bag",
-        "jacket"
+        "handbag",
+        "crossbody",
+        "tote",
+        "wallet",
+        "bag"
       ];
       const electronicsWords = [
         "phone",
         "laptop",
         "tablet",
         "headphones",
+        "airpods",
         "keyboard",
         "mouse",
         "camera"
       ];
-      if (groceryWords.some(word => lowerProduct.includes(word))) {
-        return Math.min(Math.max(budget * 0.55, 2.49), 18.99);
+      const groceryWords = [
+        "takis",
+        "chips",
+        "snack",
+        "candy",
+        "cereal",
+        "food",
+        "drink",
+        "soda",
+        "juice",
+        "cookie",
+        "cookies",
+        "grocery"
+      ];
+      if (sneakerWords.some(word => lowerProduct.includes(word))) {
+        return Math.min(Math.max(budget * 0.82, 69.99), 220);
       }
-      if (clothingWords.some(word => lowerProduct.includes(word))) {
-        return Math.min(Math.max(budget * 0.65, 14.99), 89.99);
+      if (purseWords.some(word => lowerProduct.includes(word))) {
+        return Math.min(Math.max(budget * 0.72, 39.99), 350);
       }
       if (electronicsWords.some(word => lowerProduct.includes(word))) {
         return Math.min(Math.max(budget * 0.75, 24.99), 249.99);
       }
+      if (groceryWords.some(word => lowerProduct.includes(word))) {
+        return Math.min(Math.max(budget * 0.55, 2.49), 18.99);
+      }
       return Math.max(budget * 0.65, 9.99);
     }
-    function calculatePriceSummary(results, budget) {
-      const prices = results.map(result => result.estimatedPrice);
+    function calculatePriceSummary(items) {
+      const prices = items.map(item => item.estimatedPrice);
       const cheapest = Math.min(...prices);
-      const mostExpensive = Math.max(...prices);
+      const highest = Math.max(...prices);
       const average = prices.reduce((total, price) => total + price, 0) / prices.length;
       return {
         cheapest: roundToCents(cheapest),
         average: roundToCents(average),
-        mostExpensive: roundToCents(mostExpensive),
-        withinBudget: average <= budget
+        highest: roundToCents(highest),
+        storeCount: items.length
       };
+    }
+    function createOfficialBanner(brand, product) {
+      return `
+        <div class="official-banner" role="status">
+          <div class="banner-icon" aria-hidden="true">✓</div>
+          <div>
+            <strong>Official ${escapeHTML(brand.name)} store found</strong>
+            <p>
+              Because you searched for “${escapeHTML(product)},” the official ${escapeHTML(brand.name)} website is listed first. Use it to shop directly from the brand.
+            </p>
+          </div>
+        </div>
+      `;
+    }
+    function createGeneralBanner(product) {
+      return `
+        <div class="official-banner" role="status">
+          <div class="banner-icon" aria-hidden="true">⌕</div>
+          <div>
+            <strong>Comparison search ready</strong>
+            <p>
+              We could not identify a specific official brand for “${escapeHTML(product)}.” Try adding a brand name for a direct official-store result.
+            </p>
+          </div>
+        </div>
+      `;
     }
     function createPriceSummary(summary) {
       return `
         <div class="price-summary" aria-label="Estimated price summary">
           <div class="summary-card">
-            <div class="summary-label">Cheapest estimate</div>
+            <div class="summary-label">Lowest estimate</div>
             <div class="summary-value">$${summary.cheapest.toFixed(2)}</div>
-            <div class="summary-note">Lowest estimated store price</div>
+            <div class="summary-note">Estimated lowest price shown</div>
           </div>
           <div class="summary-card">
-            <div class="summary-label">Average price</div>
+            <div class="summary-label">Average estimate</div>
             <div class="summary-value">$${summary.average.toFixed(2)}</div>
-            <div class="summary-note">Average across ${summary.storeCount || "available"} store estimates</div>
+            <div class="summary-note">Across ${summary.storeCount} shopping destinations</div>
           </div>
           <div class="summary-card">
             <div class="summary-label">Highest estimate</div>
-            <div class="summary-value">$${summary.mostExpensive.toFixed(2)}</div>
-            <div class="summary-note">Highest estimated store price</div>
+            <div class="summary-value">$${summary.highest.toFixed(2)}</div>
+            <div class="summary-note">Estimated highest price shown</div>
           </div>
         </div>
       `;
     }
-    function createCard(store, index, query, availability, averagePrice) {
-      const isBest = index === 0;
+    function createCard(store, index, averagePrice, budget) {
+      const isOfficial = store.official;
+      const isBest = !isOfficial && store.estimatedPrice <= averagePrice;
+      const isOverBudget = store.estimatedPrice > budget;
       const differenceFromAverage = store.estimatedPrice - averagePrice;
-      const comparisonText = differenceFromAverage <= 0
-        ? "Below the estimated average"
-        : "Above the estimated average";
+      let priceNote = "Estimated store price";
+      if (isOfficial) {
+        priceNote = "Official-store estimate";
+      } else if (isOverBudget) {
+        priceNote = "May exceed budget";
+      } else if (differenceFromAverage <= 0) {
+        priceNote = "Below estimated average";
+      } else {
+        priceNote = "Above estimated average";
+      }
       return `
-        <article class="product-card ${isBest ? "best" : ""}">
-          ${isBest ? '<div class="best-badge">Lowest estimate</div>' : ""}
+        <article class="product-card ${isOfficial ? "official" : ""} ${isBest ? "best" : ""}">
+          <div class="badges">
+            ${isOfficial ? '<span class="badge official-badge">Official brand store</span>' : ""}
+            ${isBest ? '<span class="badge best-badge">Lower estimate</span>' : ""}
+          </div>
           <div class="product-top">
             <div>
               <div class="store-name">${escapeHTML(store.name)}</div>
@@ -961,27 +1146,28 @@
             </div>
             <div>
               <div class="price">$${store.estimatedPrice.toFixed(2)}</div>
-              <div class="price-note">${comparisonText}</div>
+              <div class="price-note">${priceNote}</div>
             </div>
           </div>
           <div class="product-description">
-            This is an estimated comparison price, not a live quote. The store page will show the exact item, package size, current price, shipping, taxes, and availability.
-            ${availability.warning ? " Because this item may be difficult to find, it is worth checking more than one store." : ""}
+            ${isOfficial
+              ? `Shop directly from the official ${escapeHTML(store.name)} website. This is the best match for your brand-specific search.`
+              : `Use this page to compare ${escapeHTML(store.name)} listings. The retailer page will show the exact product, current price, shipping, taxes, and availability.`}
           </div>
           <a
             class="store-button"
-            href="${store.url(query)}"
+            href="${store.url(productInput.value.trim())}"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Search ${escapeHTML(store.name)} for ${escapeHTML(query)}"
+            aria-label="Open ${escapeHTML(store.name)} search for ${escapeHTML(productInput.value.trim())}"
           >
-            Search ${escapeHTML(store.name)} →
+            ${isOfficial ? `Shop ${escapeHTML(store.name)} Official Store →` : `Search ${escapeHTML(store.name)} →`}
           </a>
         </article>
       `;
     }
     function showMessage(title, text) {
-      document.getElementById("results").innerHTML = `
+      results.innerHTML = `
         <div class="message" role="alert">
           <strong>${escapeHTML(title)}</strong>
           ${escapeHTML(text)}
@@ -1000,12 +1186,22 @@
         "'": "&#039;"
       }[character]));
     }
-    ["product", "color", "budget"].forEach(id => {
-      document.getElementById(id).addEventListener("keydown", event => {
+    searchButton.addEventListener("click", findProducts);
+    [productInput, colorInput, budgetInput].forEach(input => {
+      input.addEventListener("keydown", event => {
         if (event.key === "Enter") {
           findProducts();
         }
       });
+    });
+    document.querySelectorAll(".quick-button").forEach(button => {
+      button.addEventListener("click", () => {
+        productInput.value = button.dataset.product;
+        productInput.focus();
+      });
+    });
+    themeSelect.addEventListener("change", event => {
+      applyTheme(event.target.value);
     });
     loadTheme();
   </script>
