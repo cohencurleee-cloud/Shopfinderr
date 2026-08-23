@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111111">
+<title>ShopFinder</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Arial,sans-serif;background:#f5f5f7;color:#111}
+.wrap{max-width:760px;margin:auto;padding:24px 16px 50px}.hero{padding:28px 4px 20px}
+h1{font-size:38px;line-height:1;margin:0 0 10px;font-weight:800;letter-spacing:-1.5px}
+.sub{color:#666;font-size:16px}.panel{background:white;border-radius:22px;padding:16px;box-shadow:0 8px 30px #0000000d;margin:12px 0 22px}
+label{display:block;font-size:13px;font-weight:700;margin:4px 0 7px;color:#555}
+input{width:100%;border:1px solid #ddd;border-radius:14px;padding:15px;font-size:17px;outline:none}
+.row{display:grid;grid-template-columns:1fr 150px;gap:10px;margin-bottom:10px}
+button{width:100%;border:0;border-radius:14px;padding:15px;font-size:17px;font-weight:800;background:#111;color:white}
+button:active{transform:scale(.99)}.status{color:#666;text-align:center;margin:14px 0}
+.grid{display:grid;gap:14px}.card{background:white;border-radius:20px;overflow:hidden;box-shadow:0 7px 24px #0000000b}
+.pic{height:180px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:64px}
+.info{padding:15px}.store{font-size:12px;font-weight:800;color:#777;text-transform:uppercase}
+.name{font-size:18px;font-weight:800;margin:5px 0}.price{font-size:22px;font-weight:900}.old{text-decoration:line-through;color:#999;font-size:14px;margin-left:5px}.under{font-size:13px;color:#666;margin:5px 0 13px}
+.shop{display:block;text-align:center;text-decoration:none;background:#111;color:#fff;padding:12px;border-radius:12px;font-weight:800}
+.note{font-size:12px;color:#777;line-height:1.45;margin-top:20px}
+@media(max-width:520px){.row{grid-template-columns:1fr 120px}h1{font-size:34px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <h1>ShopFinder</h1>
+    <div class="sub">Tell me what you want. Give me a budget. I’ll find the cheapest matches.</div>
+  </div>
+
+  <div class="panel">
+    <div class="row">
+      <div><label for="q">What are you looking for?</label><input id="q" placeholder="e.g. black Nike shoes"></div>
+      <div><label for="budget">Budget</label><input id="budget" type="number" min="1" placeholder="$80"></div>
+    </div>
+    <button onclick="searchProducts()">Find it</button>
+  </div>
+
+  <div id="status" class="status">Try “Nike shoes” with a budget of 80.</div>
+  <div id="results" class="grid"></div>
+
+  <div class="note">
+    Prototype mode: the sample results below are local demo data. Real store prices require a product-search API/backend; browser requests to other sites can be blocked by CORS.
+  </div>
+</div>
+
+<script>
+const products = [
+ {store:"Nike",name:"Nike Court Vision Low",price:70,emoji:"👟",url:"https://www.nike.com/"},
+ {store:"Nike",name:"Nike Revolution 7",price:70,emoji:"👟",url:"https://www.nike.com/"},
+ {store:"Nike",name:"Nike Downshifter 13",price:65,emoji:"👟",url:"https://www.nike.com/"},
+ {store:"Nike",name:"Nike Everyday Cushioned Socks",price:22,emoji:"🧦",url:"https://www.nike.com/"},
+ {store:"Target",name:"Everyday Fleece Hoodie",price:30,emoji:"👕",url:"https://www.target.com/"},
+ {store:"Walmart",name:"Athletic Running Shoes",price:39,emoji:"👟",url:"https://www.walmart.com/"},
+ {store:"Best Buy",name:"Wireless Earbuds",price:59,emoji:"🎧",url:"https://www.bestbuy.com/"},
+ {store:"Amazon",name:"Portable Bluetooth Speaker",price:35,emoji:"🔊",url:"https://www.amazon.com/"}
+];
+
+function searchProducts(){
+  const q=document.getElementById("q").value.trim().toLowerCase();
+  const budget=Number(document.getElementById("budget").value);
+  const status=document.getElementById("status"), results=document.getElementById("results");
+  if(!q || !budget){status.textContent="Enter an item and a budget. Bro, I can't read minds.";results.innerHTML="";return}
+  const terms=q.split(/\s+/).filter(Boolean);
+  let matches=products.filter(p => p.price<=budget && terms.some(t =>
+    (p.name+" "+p.store).toLowerCase().includes(t)
+  ));
+  if(!matches.length) matches=products.filter(p=>p.price<=budget).slice(0,6);
+  matches.sort((a,b)=>a.price-b.price);
+  status.textContent=matches.length ? `${matches.length} match${matches.length===1?"":"es"} under $${budget}` : "Nothing found under that budget. You're cooked.";
+  results.innerHTML=matches.map(p=>`
+    <div class="card">
+      <div class="pic">${p.emoji}</div>
+      <div class="info">
+        <div class="store">${p.store}</div>
+        <div class="name">${p.name}</div>
+        <div class="price">$${p.price.toFixed(2)}</div>
+        <div class="under">Within your $${budget} budget</div>
+        <a class="shop" href="${p.url}" target="_blank" rel="noopener">Shop at ${p.store}</a>
+      </div>
+    </div>`).join("");
+}
+document.getElementById("q").addEventListener("keydown",e=>{if(e.key==="Enter")searchProducts()});
+document.getElementById("budget").addEventListener("keydown",e=>{if(e.key==="Enter")searchProducts()});
+</script>
+</body>
+</html>
