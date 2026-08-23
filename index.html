@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="ShopFinderr compares shopping search results and helps you find products within your budget.">
-  <title>ShopFinderr — Compare Prices</title>
+  <meta name="description" content="ShopFinderr helps you search stores and warns you when a product may be difficult to find within your budget.">
+  <title>ShopFinderr — Find It Within Your Budget</title>
   <style>
     :root {
       color-scheme: light;
@@ -14,7 +14,9 @@
       --purple: #7657ff;
       --purple-dark: #5b3df5;
       --green: #08734f;
-      --card: rgba(255,255,255,.9);
+      --red: #b42318;
+      --yellow: #9a6700;
+      --card: rgba(255,255,255,.92);
       --surface: #ffffff;
       --surface-soft: #f7f8fc;
       --line: #e4e7ec;
@@ -29,7 +31,7 @@
       --ink: #f4f7fb;
       --muted: #b7c0d0;
       --soft-muted: #d0d7e2;
-      --card: rgba(25, 31, 45, .94);
+      --card: rgba(25, 31, 45, .95);
       --surface: #1b2230;
       --surface-soft: #101621;
       --line: #344054;
@@ -50,6 +52,8 @@
       --purple: #ffff00;
       --purple-dark: #ffff00;
       --green: #00ff9d;
+      --red: #ff6b6b;
+      --yellow: #ffff00;
       --header-start: #000000;
       --header-mid: #000000;
       --header-end: #000000;
@@ -96,6 +100,17 @@
     }
     .skip-link:focus {
       transform: translateY(0);
+    }
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
     header {
       position: relative;
@@ -184,7 +199,7 @@
     }
     .search-grid {
       display: grid;
-      grid-template-columns: 1.5fr .7fr auto;
+      grid-template-columns: 1.5fr .7fr .7fr auto;
       gap: 14px;
       align-items: end;
     }
@@ -286,6 +301,42 @@
       font-size: 13px;
       font-weight: 700;
       white-space: nowrap;
+    }
+    .availability-alert {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 18px;
+      padding: 18px;
+      border: 1px solid #f2c94c;
+      border-radius: 18px;
+      color: var(--yellow);
+      background: rgba(255, 248, 220, .95);
+      box-shadow: 0 8px 22px rgba(154, 103, 0, .08);
+    }
+    html[data-theme="dark"] .availability-alert {
+      background: #3b3215;
+    }
+    html[data-theme="high-contrast"] .availability-alert {
+      color: #000;
+      background: var(--yellow);
+    }
+    .availability-alert .alert-icon {
+      flex: 0 0 auto;
+      font-size: 24px;
+      line-height: 1;
+    }
+    .availability-alert strong {
+      display: block;
+      margin-bottom: 4px;
+      color: inherit;
+      font-size: 16px;
+    }
+    .availability-alert p {
+      margin: 0;
+      color: inherit;
+      font-size: 14px;
+      line-height: 1.5;
     }
     .products {
       display: grid;
@@ -432,6 +483,14 @@
         transition-duration: .01ms !important;
       }
     }
+    @media (max-width: 900px) {
+      .search-grid {
+        grid-template-columns: 1.3fr .7fr .7fr;
+      }
+      .search-grid button {
+        grid-column: 1 / -1;
+      }
+    }
     @media (max-width: 760px) {
       .topbar {
         justify-content: center;
@@ -484,7 +543,7 @@
       </div>
     </div>
 <h1>Shop<span>Finderr</span></h1>
-<p>Compare stores. Find the lowest listed price.</p>
+<p>Search stores and find products within your budget.</p>
   </header>
   <main id="main-content" class="container">
     <section class="search-box" aria-labelledby="search-heading">
@@ -496,11 +555,11 @@
         id="product"
         type="text"
         autocomplete="off"
-        placeholder="Example: Coach purse"
+        placeholder="Example: blue Takis"
         aria-describedby="productHelp"
       >
       <div id="productHelp" class="visually-hidden">
-        Enter the product you want to compare.
+        Enter the product you want to find.
       </div>
     </div>
     <div>
@@ -509,11 +568,11 @@
         id="color"
         type="text"
         autocomplete="off"
-        placeholder="Any color"
+        placeholder="Optional"
         aria-describedby="colorHelp"
       >
       <div id="colorHelp" class="visually-hidden">
-        Enter a preferred color, or leave this field blank for any color.
+        Enter a preferred color, or leave this field blank.
       </div>
     </div>
     <div>
@@ -521,10 +580,10 @@
       <input
         id="budget"
         type="number"
-        min="1"
-        step="1"
+        min="0.01"
+        step="0.01"
         inputmode="decimal"
-        placeholder="$120"
+        placeholder="$5"
         aria-describedby="budgetHelp"
       >
       <div id="budgetHelp" class="visually-hidden">
@@ -532,31 +591,20 @@
       </div>
     </div>
     <button id="searchButton" type="button" onclick="findProducts()">
-      Compare Prices
+      Find It
     </button>
   </div>
   <div class="notice">
-    Prices shown below are search estimates based on retailer search pages.
-    Always confirm the final price, shipping, taxes, color, and availability before buying.
+    ShopFinderr opens retailer searches for your product and budget. Retailer pages are the final source of truth for price and availability.
   </div>
 </section>
 <section id="results" aria-live="polite" aria-atomic="true"></section>
 <p class="footer-note">
-  ShopFinderr does not guarantee prices or availability. Retailer pages are the final source of truth.
+  ShopFinderr cannot verify live inventory from a static website. If a product is uncommon, seasonal, sold out, or difficult to find, we will warn you.
 </p>
   </main>
   <script>
     const stores = [
-      {
-        name: "Google Shopping",
-        description: "Compare listings from many retailers.",
-        url: query => `https://www.google.com/search?tbm=shop&q=${encodeURIComponent(query)}`
-      },
-      {
-        name: "Bing Shopping",
-        description: "Browse shopping results from multiple stores.",
-        url: query => `https://www.bing.com/shop?q=${encodeURIComponent(query)}`
-      },
       {
         name: "Amazon",
         description: "Search Amazon listings and current offers.",
@@ -574,23 +622,28 @@
       },
       {
         name: "eBay",
-        description: "Compare new and used listings.",
+        description: "Search new, used, and collectible listings.",
         url: query => `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}`
       },
       {
-        name: "Macy's",
-        description: "Search fashion and accessories.",
-        url: query => `https://www.macys.com/shop/featured/${encodeURIComponent(query)}`
+        name: "Kroger",
+        description: "Search grocery products and local store listings.",
+        url: query => `https://www.kroger.com/search?query=${encodeURIComponent(query)}`
       },
       {
-        name: "Nordstrom",
-        description: "Search premium fashion listings.",
-        url: query => `https://www.nordstrom.com/sr?keyword=${encodeURIComponent(query)}`
+        name: "Instacart",
+        description: "Search grocery delivery listings near you.",
+        url: query => `https://www.instacart.com/store/s?k=${encodeURIComponent(query)}`
       },
       {
-        name: "Coach",
-        description: "Search Coach's official store.",
-        url: query => `https://www.coach.com/search?q=${encodeURIComponent(query)}`
+        name: "Dollar General",
+        description: "Search low-cost everyday products.",
+        url: query => `https://www.dollargeneral.com/search?q=${encodeURIComponent(query)}`
+      },
+      {
+        name: "CVS",
+        description: "Search snacks, groceries, and everyday products.",
+        url: query => `https://www.cvs.com/search?searchTerm=${encodeURIComponent(query)}`
       }
     ];
     const themeSelect = document.getElementById("themeSelect");
@@ -631,7 +684,7 @@
       const results = document.getElementById("results");
       const button = document.getElementById("searchButton");
       if (!product) {
-        showMessage("Enter a product first.", "Tell us what you want to compare.");
+        showMessage("Enter a product first.", "Tell us what you want to find.");
         document.getElementById("product").focus();
         return;
       }
@@ -645,80 +698,155 @@
       results.innerHTML = `
         <div class="message loading" role="status">
           <span class="spinner" aria-hidden="true"></span>
-          <span>Preparing price comparison results...</span>
+          <span>Checking stores and preparing search links...</span>
         </div>
       `;
       const queryParts = [product];
       if (color) {
         queryParts.push(color);
       }
-      queryParts.push(`under $${budget}`);
+      queryParts.push(`under $${budget.toFixed(2)}`);
       const query = queryParts.join(" ");
       setTimeout(() => {
-        const estimatedResults = createEstimatedResults(budget);
+        const availability = assessAvailability(product, budget);
+        const searchStores = chooseStores(product);
+        const estimatedResults = createSearchResults(searchStores);
         results.innerHTML = `
+          ${availability.warning ? createAvailabilityAlert(availability) : ""}
           <div class="results-heading">
             <div>
               <h2 class="results-title">
-                Best places to buy ${escapeHTML(product)}${color ? ` in ${escapeHTML(color)}` : ""}
+                Stores to check for ${escapeHTML(product)}${color ? ` in ${escapeHTML(color)}` : ""}
               </h2>
               <p class="results-subtitle">
-                Sorted from lowest estimated starting price to highest
+                These are search links, not guaranteed live product matches.
               </p>
             </div>
-            <div class="sort-label">Budget: $${budget.toFixed(2)}</div>
+            <div class="sort-label">Max budget: $${budget.toFixed(2)}</div>
           </div>
           <div class="products">
-            ${estimatedResults.map((store, index) => createCard(store, index, query)).join("")}
+            ${estimatedResults.map((store, index) => createCard(store, index, query, availability)).join("")}
           </div>
         `;
         button.disabled = false;
-        button.textContent = "Compare Prices";
+        button.textContent = "Find It";
         window.scrollTo({
           top: results.offsetTop - 20,
           behavior: "smooth"
         });
       }, 500);
     }
-    function createEstimatedResults(budget) {
-      const percentages = [0.62, 0.71, 0.78, 0.84, 0.89, 0.95, 1.03, 1.12, 1.2];
-      return stores
-        .map((store, index) => ({
-          ...store,
-          estimatedPrice: Math.max(
-            9.99,
-            Math.min(budget, budget * percentages[index])
-          )
-        }))
-        .sort((a, b) => a.estimatedPrice - b.estimatedPrice);
+    function chooseStores(product) {
+      const lowerProduct = product.toLowerCase();
+      const groceryWords = [
+        "takis",
+        "chips",
+        "snack",
+        "candy",
+        "cereal",
+        "food",
+        "drink",
+        "soda",
+        "juice",
+        "cookie",
+        "cookies",
+        "grocery"
+      ];
+      const isGrocery = groceryWords.some(word => lowerProduct.includes(word));
+      if (isGrocery) {
+        return stores.filter(store =>
+          ["Walmart", "Target", "Kroger", "Instacart", "Dollar General", "CVS", "Amazon", "eBay"]
+            .includes(store.name)
+        );
+      }
+      return stores.filter(store =>
+        ["Amazon", "Walmart", "Target", "eBay", "Instacart"]
+          .includes(store.name)
+      );
     }
-    function createCard(store, index, query) {
+    function assessAvailability(product, budget) {
+      const lowerProduct = product.toLowerCase();
+      const uncommonWords = [
+        "blue takis",
+        "rare",
+        "limited edition",
+        "discontinued",
+        "vintage",
+        "exclusive",
+        "hard to find",
+        "sold out",
+        "collectible"
+      ];
+      const likelyUncommon = uncommonWords.some(word => lowerProduct.includes(word));
+      const veryLowBudget = budget < 5;
+      const warning = likelyUncommon || veryLowBudget;
+      if (likelyUncommon && veryLowBudget) {
+        return {
+          warning: true,
+          title: "This item may be difficult to find under your budget.",
+          text: "The product may be uncommon, limited, sold out, or priced above your budget. Check several stores and confirm the final price before buying."
+        };
+      }
+      if (likelyUncommon) {
+        return {
+          warning: true,
+          title: "This item may not be widely available.",
+          text: "The product name suggests it could be uncommon, limited, seasonal, or sold out at some stores. Try multiple retailers."
+        };
+      }
+      if (veryLowBudget) {
+        return {
+          warning: true,
+          title: "Your budget is very low for some products.",
+          text: "You may find this item, but shipping, taxes, package size, or retailer minimums could make the final total higher than your budget."
+        };
+      }
+      return {
+        warning: false,
+        title: "",
+        text: ""
+      };
+    }
+    function createAvailabilityAlert(availability) {
+      return `
+        <div class="availability-alert" role="status">
+          <div class="alert-icon" aria-hidden="true">⚠️</div>
+          <div>
+            <strong>${escapeHTML(availability.title)}</strong>
+            <p>${escapeHTML(availability.text)}</p>
+          </div>
+        </div>
+      `;
+    }
+    function createSearchResults(selectedStores) {
+      return selectedStores.map((store, index) => ({
+        ...store,
+        rank: index
+      }));
+    }
+    function createCard(store, index, query, availability) {
       const isBest = index === 0;
       return `
         <article class="product-card ${isBest ? "best" : ""}">
-          ${isBest ? '<div class="best-badge">Lowest estimate</div>' : ""}
+          ${isBest ? '<div class="best-badge">Check first</div>' : ""}
           <div class="product-top">
             <div>
               <div class="store-name">${escapeHTML(store.name)}</div>
               <div class="store-info">${escapeHTML(store.description)}</div>
             </div>
-            <div>
-              <div class="price">$${store.estimatedPrice.toFixed(2)}</div>
-              <div class="price-note">estimated starting price</div>
-            </div>
           </div>
           <div class="product-description">
-            Search this store for matching listings. The retailer page will show the exact item,
-            current price, shipping, taxes, color, and availability.
+            Search this store for matching listings under your budget. The store page will show the exact item, package size, current price, shipping, taxes, and availability.
+            ${availability.warning ? " Because this item may be difficult to find, it is worth checking more than one store." : ""}
           </div>
           <a
             class="store-button"
             href="${store.url(query)}"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="View current ${escapeHTML(store.name)} listings for ${escapeHTML(query)}"
+            aria-label="Search ${escapeHTML(store.name)} for ${escapeHTML(query)}"
           >
-            View current listings →
+            Search ${escapeHTML(store.name)} →
           </a>
         </article>
       `;
