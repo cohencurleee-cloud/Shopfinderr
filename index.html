@@ -1,90 +1,315 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#111111">
-<title>ShopFinder</title>
-<style>
-*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Arial,sans-serif;background:#f5f5f7;color:#111}
-.wrap{max-width:760px;margin:auto;padding:24px 16px 50px}.hero{padding:28px 4px 20px}
-h1{font-size:38px;line-height:1;margin:0 0 10px;font-weight:800;letter-spacing:-1.5px}
-.sub{color:#666;font-size:16px}.panel{background:white;border-radius:22px;padding:16px;box-shadow:0 8px 30px #0000000d;margin:12px 0 22px}
-label{display:block;font-size:13px;font-weight:700;margin:4px 0 7px;color:#555}
-input{width:100%;border:1px solid #ddd;border-radius:14px;padding:15px;font-size:17px;outline:none}
-.row{display:grid;grid-template-columns:1fr 150px;gap:10px;margin-bottom:10px}
-button{width:100%;border:0;border-radius:14px;padding:15px;font-size:17px;font-weight:800;background:#111;color:white}
-button:active{transform:scale(.99)}.status{color:#666;text-align:center;margin:14px 0}
-.grid{display:grid;gap:14px}.card{background:white;border-radius:20px;overflow:hidden;box-shadow:0 7px 24px #0000000b}
-.pic{height:180px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:64px}
-.info{padding:15px}.store{font-size:12px;font-weight:800;color:#777;text-transform:uppercase}
-.name{font-size:18px;font-weight:800;margin:5px 0}.price{font-size:22px;font-weight:900}.old{text-decoration:line-through;color:#999;font-size:14px;margin-left:5px}.under{font-size:13px;color:#666;margin:5px 0 13px}
-.shop{display:block;text-align:center;text-decoration:none;background:#111;color:#fff;padding:12px;border-radius:12px;font-weight:800}
-.note{font-size:12px;color:#777;line-height:1.45;margin-top:20px}
-@media(max-width:520px){.row{grid-template-columns:1fr 120px}h1{font-size:34px}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopFinderr</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f5f6fa;
+      color: #171717;
+    }
+    header {
+      background: #111827;
+      color: white;
+      text-align: center;
+      padding: 45px 20px;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 42px;
+      font-weight: 800;
+    }
+    header h1 span {
+      color: #6366f1;
+    }
+    header p {
+      margin-top: 10px;
+      color: #d1d5db;
+      font-size: 17px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 35px auto;
+      padding: 0 18px;
+    }
+    .search-box {
+      background: white;
+      padding: 25px;
+      border-radius: 18px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    }
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 7px;
+    }
+    input {
+      width: 100%;
+      padding: 15px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 16px;
+      margin-bottom: 18px;
+    }
+    input:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99,102,241,.15);
+    }
+    button {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      background: #6366f1;
+      color: white;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #4f46e5;
+    }
+    #results {
+      margin-top: 25px;
+    }
+    .results-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 15px;
+    }
+    .store {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+    }
+    .store-name {
+      font-size: 19px;
+      font-weight: 800;
+    }
+    .store-info {
+      color: #6b7280;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+    .store-button {
+      background: #111827;
+      color: white;
+      text-decoration: none;
+      padding: 12px 18px;
+      border-radius: 9px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .store-button:hover {
+      background: #374151;
+    }
+    .message {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      text-align: center;
+      color: #6b7280;
+    }
+    .notice {
+      margin-top: 15px;
+      font-size: 13px;
+      color: #6b7280;
+      line-height: 1.5;
+    }
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 34px;
+      }
+      .store {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .store-button {
+        text-align: center;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="hero">
-    <h1>ShopFinder</h1>
-    <div class="sub">Tell me what you want. Give me a budget. I’ll find the cheapest matches.</div>
-  </div>
-
-  <div class="panel">
-    <div class="row">
-      <div><label for="q">What are you looking for?</label><input id="q" placeholder="e.g. black Nike shoes"></div>
-      <div><label for="budget">Budget</label><input id="budget" type="number" min="1" placeholder="$80"></div>
+<header>
+  <h1>Shop<span>Finderr</span></h1>
+  <p>Find what you want. Stay within your budget.</p>
+</header>
+<div class="container">
+  <div class="search-box">
+    <label for="product">What are you looking for?</label>
+    <input
+      id="product"
+      type="text"
+      placeholder="Example: Coach purse"
+    >
+    <label for="budget">What's your budget?</label>
+    <input
+      id="budget"
+      type="number"
+      min="1"
+      step="1"
+      placeholder="Example: 120"
+    >
+    <button onclick="findProducts()">
+      Find It
+    </button>
+    <div class="notice">
+      ShopFinderr searches retailer and shopping-search pages using your product and maximum budget.
+      Prices and availability can change on the retailer's website.
     </div>
-    <button onclick="searchProducts()">Find it</button>
   </div>
-
-  <div id="status" class="status">Try “Nike shoes” with a budget of 80.</div>
-  <div id="results" class="grid"></div>
-
-  <div class="note">
-    Prototype mode: the sample results below are local demo data. Real store prices require a product-search API/backend; browser requests to other sites can be blocked by CORS.
-  </div>
+  <div id="results"></div>
 </div>
-
 <script>
-const products = [
- {store:"Nike",name:"Nike Court Vision Low",price:70,emoji:"👟",url:"https://www.nike.com/"},
- {store:"Nike",name:"Nike Revolution 7",price:70,emoji:"👟",url:"https://www.nike.com/"},
- {store:"Nike",name:"Nike Downshifter 13",price:65,emoji:"👟",url:"https://www.nike.com/"},
- {store:"Nike",name:"Nike Everyday Cushioned Socks",price:22,emoji:"🧦",url:"https://www.nike.com/"},
- {store:"Target",name:"Everyday Fleece Hoodie",price:30,emoji:"👕",url:"https://www.target.com/"},
- {store:"Walmart",name:"Athletic Running Shoes",price:39,emoji:"👟",url:"https://www.walmart.com/"},
- {store:"Best Buy",name:"Wireless Earbuds",price:59,emoji:"🎧",url:"https://www.bestbuy.com/"},
- {store:"Amazon",name:"Portable Bluetooth Speaker",price:35,emoji:"🔊",url:"https://www.amazon.com/"}
-];
-
-function searchProducts(){
-  const q=document.getElementById("q").value.trim().toLowerCase();
-  const budget=Number(document.getElementById("budget").value);
-  const status=document.getElementById("status"), results=document.getElementById("results");
-  if(!q || !budget){status.textContent="Enter an item and a budget. Bro, I can't read minds.";results.innerHTML="";return}
-  const terms=q.split(/\s+/).filter(Boolean);
-  let matches=products.filter(p => p.price<=budget && terms.some(t =>
-    (p.name+" "+p.store).toLowerCase().includes(t)
-  ));
-  if(!matches.length) matches=products.filter(p=>p.price<=budget).slice(0,6);
-  matches.sort((a,b)=>a.price-b.price);
-  status.textContent=matches.length ? `${matches.length} match${matches.length===1?"":"es"} under $${budget}` : "Nothing found under that budget. You're cooked.";
-  results.innerHTML=matches.map(p=>`
-    <div class="card">
-      <div class="pic">${p.emoji}</div>
-      <div class="info">
-        <div class="store">${p.store}</div>
-        <div class="name">${p.name}</div>
-        <div class="price">$${p.price.toFixed(2)}</div>
-        <div class="under">Within your $${budget} budget</div>
-        <a class="shop" href="${p.url}" target="_blank" rel="noopener">Shop at ${p.store}</a>
+function findProducts() {
+  const product =
+    document.getElementById("product").value.trim();
+  const budget =
+    document.getElementById("budget").value.trim();
+  const results =
+    document.getElementById("results");
+  if (!product) {
+    results.innerHTML =
+      '<div class="message">Enter a product first.</div>';
+    return;
+  }
+  if (!budget || Number(budget) <= 0) {
+    results.innerHTML =
+      '<div class="message">Enter a valid budget.</div>';
+    return;
+  }
+  const searchQuery =
+    `${product} under $${budget}`;
+  const encoded =
+    encodeURIComponent(searchQuery);
+  const stores = [
+    {
+      name: "Google Shopping",
+      description: "Compare products from many different stores.",
+      url:
+        `https://www.google.com/search?tbm=shop&q=${encoded}`
+    },
+    {
+      name: "Bing Shopping",
+      description: "Search products from multiple retailers.",
+      url:
+        `https://www.bing.com/shop?q=${encoded}`
+    },
+    {
+      name: "Amazon",
+      description: "Search Amazon for products within your budget.",
+      url:
+        `https://www.amazon.com/s?k=${encoded}`
+    },
+    {
+      name: "Walmart",
+      description: "Search Walmart's product catalog.",
+      url:
+        `https://www.walmart.com/search?q=${encoded}`
+    },
+    {
+      name: "Target",
+      description: "Search Target's available products.",
+      url:
+        `https://www.target.com/s?searchTerm=${encoded}`
+    },
+    {
+      name: "eBay",
+      description: "Search new and used products on eBay.",
+      url:
+        `https://www.ebay.com/sch/i.html?_nkw=${encoded}`
+    },
+    {
+      name: "Macy's",
+      description: "Search Macy's products.",
+      url:
+        `https://www.macys.com/shop/featured/${encoded}`
+    },
+    {
+      name: "Nordstrom",
+      description: "Search Nordstrom products.",
+      url:
+        `https://www.nordstrom.com/sr?keyword=${encodeURIComponent(product)}`
+    },
+    {
+      name: "Coach",
+      description: "Search Coach's official store.",
+      url:
+        `https://www.coach.com/search?q=${encodeURIComponent(product)}`
+    }
+  ];
+  let html = `
+    <div class="results-title">
+      Results for "${escapeHTML(product)}" under $${escapeHTML(budget)}
+    </div>
+  `;
+  stores.forEach(store => {
+    html += `
+      <div class="store">
+        <div>
+          <div class="store-name">
+            ${store.name}
+          </div>
+          <div class="store-info">
+            ${store.description}
+          </div>
+        </div>
+        <a
+          class="store-button"
+          href="${store.url}"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          View Items
+        </a>
       </div>
-    </div>`).join("");
+    `;
+  });
+  results.innerHTML = html;
+  window.scrollTo({
+    top: results.offsetTop - 20,
+    behavior: "smooth"
+  });
 }
-document.getElementById("q").addEventListener("keydown",e=>{if(e.key==="Enter")searchProducts()});
-document.getElementById("budget").addEventListener("keydown",e=>{if(e.key==="Enter")searchProducts()});
+function escapeHTML(text) {
+  return text.replace(/[&<>"']/g, function(character) {
+    return {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    }[character];
+  });
+}
+document
+  .getElementById("product")
+  .addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+      findProducts();
+    }
+  });
+document
+  .getElementById("budget")
+  .addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+      findProducts();
+    }
+  });
 </script>
 </body>
 </html>
